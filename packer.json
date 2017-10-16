@@ -1,0 +1,36 @@
+{
+  "variables": {
+    "fedora_version": "20170705",
+    "home": "{{env `HOME`}}",
+  },
+  "builders": [{
+    "type": "virtualbox-ovf",
+    "source_path": "{{user `home`}}/.vagrant.d/boxes/fedora-VAGRANTSLASH-26-cloud-base/{{user `fedora_version`}}/virtualbox/box.ovf",
+    "guest_additions_mode": "upload",
+    "guest_additions_path": "/tmp/VBoxGuestAdditions.iso",
+    "ssh_username": "vagrant",
+    "ssh_private_key_file": "{{user `home`}}/.vagrant.d/insecure_private_key",
+    "headless": true,
+    "shutdown_command": "echo 'vagrant' | sudo -S shutdown -P now"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "sudo dnf install -y ansible git python-netaddr"
+    ]
+  }, {
+    "type": "shell",
+    "execute_command": "sudo -S sh -c '{{.Vars}} {{.Path}}'",
+    "script": "image_scripts/vbox_ga.sh"
+  }, {
+    "type": "shell",
+    "execute_command": "sudo -S sh -c '{{.Vars}} {{.Path}}'",
+    "script": "image_scripts/minimize_box.sh"
+  }],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "output": "fedora_ansible_kubernetes.box"
+    }
+  ]
+}
