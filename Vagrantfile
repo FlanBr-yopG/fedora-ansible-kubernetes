@@ -65,16 +65,16 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    dnf install -y ansible git python-netaddr
+    /bin/bash /vagrant/vagrant_provision.sh
   SHELL
   
   config.vm.define "kube-master", primary: true do |m|
     m.vm.hostname = "kube-master"
-    m.vm.network :private_network, ip: "10.254.240.100", :netmask => "255.255.0.0"
+    m.vm.network :private_network, ip: "10.251.240.100", :netmask => "255.255.0.0"
   end
   (1..3).each do |n|
     nm = "kube-node%02d" % n
-    some_ip = "10.254.240.1%02d" % n
+    some_ip = "10.251.240.1%02d" % n
     config.vm.define nm do |node|
       node.vm.hostname = nm
       node.vm.network :private_network, ip: some_ip, :netmask => "255.255.0.0"
