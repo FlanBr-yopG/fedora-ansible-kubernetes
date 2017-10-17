@@ -12,19 +12,26 @@ set -ex
 cd / ;
 [[ -d ansi-kube ]] || mkdir ansi-kube ;
 cd ansi-kube ;
-[[ -d contrib ]] || git clone -q https://github.com/kubernetes/contrib.git
-cd contrib/ansible/inventory
-echo -e "[masters]\\nkube-master.vagrant\\n\\n[etcd]\\nkube-master.vagrant\\n\\n[nodes]" > inventory
-echo "kube-node01.vagrant" >> localhost.ini
-echo "kube-node02.vagrant" >> localhost.ini
-echo "kube-node03.vagrant" >> localhost.ini
-echo -e "\\nansible_ssh_user: vagrant" >> group_vars/all.yml
+[[ -d contrib ]] || {
+  git clone -q https://github.com/kubernetes/contrib.git
+  cd contrib/ansible/inventory
+  echo -e "[masters]\\nkube-master.vagrant\\n\\n[etcd]\\nkube-master.vagrant\\n\\n[nodes]" > inventory
+  echo "kube-node01.vagrant" >> inventory
+  echo "kube-node02.vagrant" >> inventory
+  echo "kube-node03.vagrant" >> inventory
+  echo -e "\\nansible_ssh_user: vagrant" >> group_vars/all.yml
+}
 [[ -f /root/.ssh/id_rsa ]] || {
   umask 0077
   cat /vagrant/kube-master-priv > /root/.ssh/id_rsa
   ssh-keygen -y -f /root/.ssh/id_rsa > /root/.ssh/id_rsa.pub
   cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
   cat /root/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+}
+which kubectl || {
+  curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+  chmod +x ./kubectl
+  mv ./kubectl /usr/local/bin/kubectl
 }
 
 #
