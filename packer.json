@@ -1,7 +1,7 @@
 {
   "variables": {
     "fedora_version": "20170705",
-    "home": "{{env `HOME`}}",
+    "home": "{{env `HOME`}}"
   },
   "builders": [{
     "type": "virtualbox-ovf",
@@ -15,13 +15,36 @@
   }],
   "provisioners": [{
     "type": "shell",
+    "expect_disconnect": true,
     "inline": [
-      "sudo dnf install -y ansible git python-netaddr"
+      "uname -r",
+      "# sudo yum clean all; sudo yum makecache; sudo yum update -y",
+      "sudo dnf update -y kernel*",
+      "sudo dnf update -y",
+      "# sudo dnf update -y && sudo dnf upgrade -y",
+      "sudo shutdown -r now"
+    ]
+  }, {
+    "type": "shell",
+    "pause_before": "10s",
+    "inline": [
+      "sudo dnf install -y ansible git python-netaddr",
+      "sudo dnf install -y kernel-devel kernel-headers gcc dkms make bzip2 perl autoconf automake elfutils-libelf-devel # For VirtualBox guest additions to work.",
+      "# ls -lart /usr/src/kernels/",
+      "uname -r",
+      "# sudo dnf install -y kernel-headers-`uname -r`"
     ]
   }, {
     "type": "shell",
     "execute_command": "sudo -S sh -c '{{.Vars}} {{.Path}}'",
     "script": "image_scripts/vbox_ga.sh"
+  }, {
+    "type": "shell",
+    "inline": [
+      "cat /var/log/vboxadd-install.log || true",
+      "echo -e \"\\n\\n\\n\"",
+      "cat /var/lib/dkms/vboxguest/5.1.30/build/make.log || true"
+    ]
   }, {
     "type": "shell",
     "execute_command": "sudo -S sh -c '{{.Vars}} {{.Path}}'",

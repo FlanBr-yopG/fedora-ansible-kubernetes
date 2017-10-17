@@ -14,13 +14,12 @@ cd / ;
 cd ansi-kube ;
 [[ -d contrib ]] || git clone -q https://github.com/kubernetes/contrib.git
 cd contrib/ansible/inventory
-cp localhost.ini localhost.ini.bak
-echo -e "[masters]\\nkube-master.vagrant\\n\\n[etcd]\\nkube-master.vagrant\\n\\n[nodes]" > localhost.ini
+echo -e "[masters]\\nkube-master.vagrant\\n\\n[etcd]\\nkube-master.vagrant\\n\\n[nodes]" > inventory
 echo "kube-node01.vagrant" >> localhost.ini
 echo "kube-node02.vagrant" >> localhost.ini
 echo "kube-node03.vagrant" >> localhost.ini
 echo -e "\\nansible_ssh_user: vagrant" >> group_vars/all.yml
-[[ /root/.ssh/id_rsa ]] || {
+[[ -f /root/.ssh/id_rsa ]] || {
   umask 0077
   cat /vagrant/kube-master-priv > /root/.ssh/id_rsa
   ssh-keygen -y -f /root/.ssh/id_rsa > /root/.ssh/id_rsa.pub

@@ -1,1 +1,3 @@
 .vagrant
+kube-master-priv
+*.box

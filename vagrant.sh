@@ -4,7 +4,7 @@ main() {
   set -ex
   vagrant reload
   vagrant up
-  [[ -f ./kube-master-priv ]] || cp ./vagrant/machines/kube-master/virtualbox/private_key ./kube-master-priv
+  [[ -f ./kube-master-priv ]] || cp ./.vagrant/machines/kube-master/virtualbox/private_key ./kube-master-priv
   vagrant provision
 }
 final() {
