@@ -2,3 +2,4 @@
 kube-master-priv
 *.box
 *.log
+*.log
