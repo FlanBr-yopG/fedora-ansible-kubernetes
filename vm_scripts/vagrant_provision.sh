@@ -23,15 +23,23 @@ cd ansi-kube ;
 }
 [[ -f /root/.ssh/id_rsa ]] || {
   umask 0077
+  [[ -e /vagrant/kube-master-priv ]] \
+  || cp /vagrant/.vagrant/machines/kube-master/virtualbox/private_key /vagrant/kube-master-priv
   cat /vagrant/kube-master-priv > /root/.ssh/id_rsa
   ssh-keygen -y -f /root/.ssh/id_rsa > /root/.ssh/id_rsa.pub
   cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
   cat /root/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
 }
 which kubectl || {
-  curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+  curl -sLO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
   chmod +x ./kubectl
   mv ./kubectl /usr/local/bin/kubectl
+}
+yum list installed docker || yum -y install docker;
+systemctl status rhel-push-plugin.socket | egrep '^ *Active: active (running)' || {
+  yum -y remove container-selinux ;
+  yum -y install container-selinux ;
+  systemctl start rhel-push-plugin.socket;
 }
 
 #
