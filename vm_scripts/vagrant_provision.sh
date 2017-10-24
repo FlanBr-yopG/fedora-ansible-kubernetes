@@ -40,6 +40,11 @@ systemctl status rhel-push-plugin.socket | egrep '^ *Active: active (running)' |
   yum -y remove container-selinux ;
   yum -y install container-selinux ;
   systemctl start rhel-push-plugin.socket;
-}
+  sleep 5;
+  systemctl status rhel-push-plugin.socket | egrep '^ *Active: active (running)'
+  systemctl enable docker
+  systemctl start docker
+  systemctl status docker | egrep '^ *Active: active (running)'
+} > /tmp/rhel-push-plugin.socket.fix.log 2>&1
 
 #
