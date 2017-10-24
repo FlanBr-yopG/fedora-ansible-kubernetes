@@ -72,7 +72,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "kube-master", primary: true do |m|
     m.vm.hostname = "kube-master"
     m.vm.network :private_network, ip: "10.251.240.100", :netmask => "255.255.0.0"
-    m.provider "virtualbox" do |vb|
+    m.vm.provider "virtualbox" do |vb|
       vb.memory = "1024"
     end
   end
