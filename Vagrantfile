@@ -82,6 +82,11 @@ Vagrant.configure("2") do |config|
     config.vm.define nm do |node|
       node.vm.hostname = nm
       node.vm.network :private_network, ip: some_ip, :netmask => "255.255.0.0"
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.memory = "1024"
+      end
+
     end
   end
 end
