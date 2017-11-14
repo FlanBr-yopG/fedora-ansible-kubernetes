@@ -10,6 +10,7 @@ egrep '^# hosts v 0 0 1' /etc/hosts || {
     echo '# hosts v 0 0 1'
   } >> /etc/hosts
 }
+dnf install -y jq
 set -ex
 cd / ;
 [[ -d ansi-kube ]] || mkdir ansi-kube ;
